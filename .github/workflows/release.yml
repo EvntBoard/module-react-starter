@@ -1,0 +1,80 @@
+name: Module React Starter
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*.*.*"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v2
+
+      - name: Install Node.js, NPM and Yarn
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14
+
+      - id: get_version
+        uses: battila7/get-version-action@v2
+
+      - name: Prepare build
+        run: mkdir ./build
+
+      - name: Copy metadata.json
+        run: |
+          cp ./metadata.json ./build/metadata.json
+
+      - name: Populate metadata.json __REPO__
+        uses: jacobtomlinson/gha-find-replace@v2
+        with:
+          find: "__REPO__"
+          replace: ${{ github.repository }}
+          regex: false
+          include: "./build/metadata.json"
+
+      - name:  Populate metadata.json __VERSION__
+        uses: jacobtomlinson/gha-find-replace@v2
+        with:
+          find: "__VERSION__"
+          replace: ${{ steps.get_version.outputs.version }}
+          regex: false
+          include: "./build/metadata.json"
+
+      - name: Copy triggers
+        run: |
+          mkdir ./build/triggers
+          cp ./triggers/love-react.js ./build/triggers/love-react.js
+
+      - name: Copy shared
+        run: |
+          mkdir ./build/shared
+          cp ./shared/constant.js ./build/shared/constant.js
+
+      - name: Build module
+        run: |
+          cd module
+          yarn
+          yarn build
+
+      - name: Copy module
+        run: |
+          mv ./module/dist ./build/module/dist
+
+      - name: Pack
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          cd ./build/
+          npx bestzip ../module-react-starter-${{ steps.get_version.outputs.version }}.zip .
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          draft: true
+          files: |
+            *.zip

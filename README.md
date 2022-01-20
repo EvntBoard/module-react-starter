@@ -1,0 +1,1 @@
+# Getting Started with an EvntBoard module built with React JS

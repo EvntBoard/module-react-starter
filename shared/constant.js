@@ -1,0 +1,1 @@
+const REACT_START_I_DO = "Yes I love react <3"
