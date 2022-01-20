@@ -1,7 +1,7 @@
 import {useEffect} from "react";
 import {useDispatch, useSelector} from "react-redux";
 
-import { actions, selectors } from "./store/debug";
+import { actions, selectors } from "./store/evntboard";
 import logo from './logo.svg';
 import './App.css';
 
