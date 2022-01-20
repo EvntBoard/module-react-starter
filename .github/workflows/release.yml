@@ -22,12 +22,12 @@ jobs:
       - id: get_version
         uses: battila7/get-version-action@v2
 
-      - name: Prepare build
-        run: mkdir ./build
+      - name: Prepare dist
+        run: mkdir ./dist
 
       - name: Copy metadata.json
         run: |
-          cp ./metadata.json ./build/metadata.json
+          cp ./metadata.json ./dist/metadata.json
 
       - name: Populate metadata.json __REPO__
         uses: jacobtomlinson/gha-find-replace@v2
@@ -35,25 +35,25 @@ jobs:
           find: "__REPO__"
           replace: ${{ github.repository }}
           regex: false
-          include: "./build/metadata.json"
+          include: "./dist/metadata.json"
 
-      - name:  Populate metadata.json __VERSION__
+      - name: Populate metadata.json __VERSION__
         uses: jacobtomlinson/gha-find-replace@v2
         with:
           find: "__VERSION__"
           replace: ${{ steps.get_version.outputs.version }}
           regex: false
-          include: "./build/metadata.json"
+          include: "./dist/metadata.json"
 
       - name: Copy triggers
         run: |
-          mkdir ./build/triggers
-          cp ./triggers/love-react.js ./build/triggers/love-react.js
+          mkdir ./dist/triggers
+          cp ./triggers/love-react.js ./dist/triggers/love-react.js
 
       - name: Copy shared
         run: |
-          mkdir ./build/shared
-          cp ./shared/constant.js ./build/shared/constant.js
+          mkdir ./dist/shared
+          cp ./shared/constant.js ./dist/shared/constant.js
 
       - name: Build module
         run: |
@@ -63,12 +63,12 @@ jobs:
 
       - name: Copy module
         run: |
-          mv ./module/dist ./build/module/dist
+          mv ./module/build ./dist/module
 
       - name: Pack
         if: startsWith(github.ref, 'refs/tags/')
         run: |
-          cd ./build/
+          cd ./dist/
           npx bestzip ../module-react-starter-${{ steps.get_version.outputs.version }}.zip .
 
       - name: Release
