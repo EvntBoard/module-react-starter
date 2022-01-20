@@ -1,5 +1,5 @@
 {
   "type": "web",
-  "repository": "__REPO__",
-  "version": "__VERSION__"
+  "repository": "__MODULE_REPO__",
+  "version": "__MODULE_VERSION__"
 }

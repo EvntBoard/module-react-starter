@@ -29,31 +29,29 @@ jobs:
         run: |
           cp ./metadata.json ./dist/metadata.json
 
-      - name: Populate metadata.json __REPO__
+      - name: Populate metadata.json __MODULE_REPO__
         uses: jacobtomlinson/gha-find-replace@v2
         with:
-          find: "__REPO__"
+          find: "__MODULE_REPO__"
           replace: ${{ github.repository }}
           regex: false
-          include: "./dist/metadata.json"
 
-      - name: Populate metadata.json __VERSION__
+      - name: Populate metadata.json __MODULE_VERSION__
         uses: jacobtomlinson/gha-find-replace@v2
         with:
-          find: "__VERSION__"
+          find: "__MODULE_VERSION__"
           replace: ${{ steps.get_version.outputs.version }}
           regex: false
-          include: "./dist/metadata.json"
 
       - name: Copy triggers
         run: |
           mkdir ./dist/triggers
-          cp ./triggers/love-react.js ./dist/triggers/love-react.js
+          cp -a ./triggers/. ./dist/triggers
 
       - name: Copy shared
         run: |
           mkdir ./dist/shared
-          cp ./shared/constant.js ./dist/shared/constant.js
+          cp -a ./shared/. ./dist/shared
 
       - name: Build module
         run: |
@@ -64,7 +62,7 @@ jobs:
       - name: Copy module
         run: |
           mkdir ./dist/module
-          mv ./module/build ./dist/module
+          cp -a ./module/build/. ./dist/module
 
       - name: Pack
         if: startsWith(github.ref, 'refs/tags/')
